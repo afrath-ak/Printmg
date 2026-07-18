@@ -1,0 +1,2334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5" />
+    <title>PrintFlow — Print Management System</title>
+
+    <!-- Font Awesome 6 (Free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <!-- Google Font (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4F46E5;
+            --primary-light: #818CF8;
+            --primary-dark: #3730A3;
+            --primary-bg: #EEF2FF;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-400: #9CA3AF;
+            --gray-500: #6B7280;
+            --gray-600: #4B5563;
+            --gray-700: #374151;
+            --gray-800: #1F2937;
+            --gray-900: #111827;
+            --radius: 12px;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.08);
+            --transition: 0.2s ease;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--gray-100);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gray-400);
+        }
+
+        /* ===== UTILITY ===== */
+        .hidden {
+            display: none !important;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-muted {
+            color: var(--gray-500);
+        }
+        .mt-1 {
+            margin-top: 0.5rem;
+        }
+        .mt-2 {
+            margin-top: 1rem;
+        }
+        .mt-3 {
+            margin-top: 1.5rem;
+        }
+        .mb-1 {
+            margin-bottom: 0.5rem;
+        }
+        .mb-2 {
+            margin-bottom: 1rem;
+        }
+        .gap-1 {
+            gap: 0.5rem;
+        }
+        .gap-2 {
+            gap: 1rem;
+        }
+        .flex {
+            display: flex;
+        }
+        .flex-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .flex-between {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .flex-col {
+            display: flex;
+            flex-direction: column;
+        }
+        .flex-wrap {
+            flex-wrap: wrap;
+        }
+        .w-full {
+            width: 100%;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.25rem;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 500;
+            line-height: 1.4;
+            cursor: pointer;
+            transition: background var(--transition), transform 0.1s;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .btn:active {
+            transform: scale(0.97);
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        .btn-secondary {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+        .btn-secondary:hover {
+            background: var(--gray-300);
+        }
+        .btn-success {
+            background: var(--success);
+            color: #fff;
+        }
+        .btn-success:hover {
+            background: #059669;
+        }
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+        .btn-danger:hover {
+            background: #DC2626;
+        }
+        .btn-warning {
+            background: var(--warning);
+            color: #fff;
+        }
+        .btn-warning:hover {
+            background: #D97706;
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--gray-600);
+            border: 1px solid var(--gray-300);
+        }
+        .btn-outline:hover {
+            background: var(--gray-100);
+        }
+        .btn-sm {
+            padding: 0.3rem 0.75rem;
+            font-size: 0.75rem;
+        }
+        .btn-lg {
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+        }
+        .btn-block {
+            width: 100%;
+            justify-content: center;
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ===== FORM ELEMENTS ===== */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+        .form-group .hint {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+        }
+        .form-control {
+            padding: 0.6rem 0.875rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.875rem;
+            transition: border var(--transition), box-shadow var(--transition);
+            background: #fff;
+            color: var(--gray-800);
+            width: 100%;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+        .form-control::placeholder {
+            color: var(--gray-400);
+        }
+        select.form-control {
+            appearance: auto;
+        }
+        textarea.form-control {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            transition: box-shadow var(--transition);
+        }
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        .card-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+        .card-header .subtitle {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+        }
+
+        /* ===== STAT CARD ===== */
+        .stat-card {
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 1.25rem 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform var(--transition), box-shadow var(--transition);
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        .stat-icon.blue {
+            background: #DBEAFE;
+            color: #2563EB;
+        }
+        .stat-icon.green {
+            background: #D1FAE5;
+            color: #059669;
+        }
+        .stat-icon.yellow {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+        .stat-icon.red {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+        .stat-icon.purple {
+            background: #EDE9FE;
+            color: #7C3AED;
+        }
+        .stat-info {
+            flex: 1;
+        }
+        .stat-info .label {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .stat-info .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            line-height: 1.2;
+        }
+
+        /* ===== TABLE ===== */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 0 -0.25rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+        thead {
+            background: var(--gray-50);
+        }
+        th {
+            text-align: left;
+            padding: 0.6rem 0.75rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        td {
+            padding: 0.6rem 0.75rem;
+            border-bottom: 1px solid var(--gray-100);
+            vertical-align: middle;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        tr:hover td {
+            background: var(--gray-50);
+        }
+
+        /* ===== BADGE ===== */
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .badge-success {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+        .badge-warning {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+        .badge-danger {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+        .badge-info {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+
+        /* ===== LOGIN PAGE ===== */
+        #loginPage {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+            padding: 1.5rem;
+        }
+        .login-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(79, 70, 229, 0.15);
+        }
+        .login-card .logo {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .login-card .logo h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .login-card .logo p {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+        .login-card .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .login-card .btn {
+            margin-top: 0.5rem;
+        }
+        .login-error {
+            color: var(--danger);
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        /* ===== APP LAYOUT ===== */
+        #app {
+            display: none;
+            min-height: 100vh;
+        }
+        #app.active {
+            display: flex;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 240px;
+            background: #fff;
+            border-right: 1px solid var(--gray-200);
+            padding: 1.25rem 0;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .sidebar-brand {
+            padding: 0 1.25rem 1.25rem;
+            border-bottom: 1px solid var(--gray-100);
+            margin-bottom: 1rem;
+        }
+        .sidebar-brand h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .sidebar-brand small {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--gray-400);
+            font-weight: 400;
+        }
+        .sidebar-nav {
+            flex: 1;
+            padding: 0 0.75rem;
+        }
+        .sidebar-nav .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.55rem 0.75rem;
+            border-radius: 8px;
+            color: var(--gray-600);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background var(--transition), color var(--transition);
+            margin-bottom: 0.15rem;
+        }
+        .sidebar-nav .nav-item:hover {
+            background: var(--gray-100);
+            color: var(--gray-800);
+        }
+        .sidebar-nav .nav-item.active {
+            background: var(--primary-bg);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        .sidebar-nav .nav-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+        }
+        .sidebar-footer {
+            padding: 1rem 1.25rem 0;
+            border-top: 1px solid var(--gray-100);
+            margin-top: 0.5rem;
+        }
+        .sidebar-footer .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+        }
+        .sidebar-footer .user-info .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary-bg);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+        .sidebar-footer .user-info .name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+        .sidebar-footer .user-info .role {
+            font-size: 0.7rem;
+            color: var(--gray-400);
+        }
+        .sidebar-footer .btn-logout {
+            width: 100%;
+            margin-top: 0.5rem;
+            padding: 0.4rem;
+            font-size: 0.8rem;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            padding: 1.5rem 2rem 2rem;
+            overflow-y: auto;
+            min-height: 100vh;
+        }
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .page-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+        .page-header .breadcrumb {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+        }
+
+        /* ===== PAGE SECTIONS ===== */
+        .page-section {
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== STATS GRID ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* ===== TOOLBAR ===== */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        .toolbar .search-box {
+            flex: 1;
+            min-width: 180px;
+            position: relative;
+        }
+        .toolbar .search-box i {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+            font-size: 0.875rem;
+        }
+        .toolbar .search-box input {
+            padding-left: 2.25rem;
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1.5rem;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: #fff;
+            border-radius: 16px;
+            max-width: 560px;
+            width: 100%;
+            padding: 1.75rem;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalIn 0.2s ease;
+        }
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        .modal-box .modal-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .modal-box .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: var(--gray-400);
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+        .modal-box .modal-close:hover {
+            color: var(--gray-700);
+        }
+        .modal-box .modal-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.25rem;
+            justify-content: flex-end;
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: 2.5rem 1rem;
+            color: var(--gray-500);
+        }
+        .empty-state i {
+            font-size: 2.5rem;
+            color: var(--gray-300);
+            margin-bottom: 0.75rem;
+        }
+        .empty-state h4 {
+            color: var(--gray-700);
+            margin-bottom: 0.25rem;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: var(--gray-600);
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                top: 0;
+                bottom: 0;
+                width: 260px;
+                z-index: 999;
+                transition: left 0.25s ease;
+                box-shadow: 4px 0 20px rgba(0, 0, 0, 0.06);
+            }
+            .sidebar.open {
+                left: 0;
+            }
+            .sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.3);
+                z-index: 998;
+                display: none;
+            }
+            .sidebar-overlay.active {
+                display: block;
+            }
+            .sidebar-toggle {
+                display: block;
+            }
+            .main-content {
+                padding: 1rem;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .modal-box {
+                margin: 0.5rem;
+                padding: 1.25rem;
+            }
+            .login-card {
+                padding: 1.75rem 1.25rem;
+            }
+            .page-header h1 {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .toolbar .search-box {
+                min-width: auto;
+            }
+            .modal-box {
+                padding: 1rem;
+            }
+        }
+
+        /* ===== TOAST ===== */
+        .toast-container {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-width: 360px;
+        }
+        .toast {
+            background: var(--gray-900);
+            color: #fff;
+            padding: 0.75rem 1.25rem;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            animation: toastIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .toast.success {
+            background: #065F46;
+        }
+        .toast.error {
+            background: #991B1B;
+        }
+        .toast.warning {
+            background: #92400E;
+        }
+        .toast i {
+            font-size: 1.1rem;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* ===== LOADING SPINNER ===== */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--gray-200);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .spinner-sm {
+            width: 14px;
+            height: 14px;
+            border-width: 2px;
+        }
+        .loading-overlay {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        /* ===== MISC ===== */
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.4rem;
+        }
+        .status-dot.online {
+            background: var(--success);
+        }
+        .status-dot.offline {
+            background: var(--danger);
+        }
+        .status-dot.pending {
+            background: var(--warning);
+        }
+        .chip {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 20px;
+            background: var(--gray-100);
+            font-size: 0.7rem;
+            color: var(--gray-600);
+        }
+        .text-truncate {
+            max-width: 140px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .mobile-access-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.7rem;
+            color: var(--gray-500);
+            background: var(--gray-100);
+            padding: 0.15rem 0.6rem;
+            border-radius: 20px;
+        }
+        .mobile-access-badge i {
+            font-size: 0.65rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================ -->
+    <!-- LOGIN PAGE -->
+    <!-- ============================================================ -->
+    <div id="loginPage">
+        <div class="login-card">
+            <div class="logo">
+                <h1><i class="fas fa-print" style="margin-right:0.3rem;"></i> PrintFlow</h1>
+                <p>Print Management System</p>
+            </div>
+            <form id="loginForm" autocomplete="off">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" class="form-control" placeholder="you@company.com" required />
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required />
+                </div>
+                <button type="submit" class="btn btn-primary btn-block btn-lg">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+                <div id="loginError" class="login-error"></div>
+            </form>
+            <p style="margin-top:1.25rem;font-size:0.75rem;color:var(--gray-400);text-align:center;">
+                Demo: admin@printflow.com / admin123
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MAIN APP -->
+    <!-- ============================================================ -->
+    <div id="app">
+
+        <!-- Sidebar Overlay (mobile) -->
+        <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <h2><i class="fas fa-print" style="margin-right:0.3rem;"></i> PrintFlow</h2>
+                <small>v2.0 · Print Management</small>
+            </div>
+            <nav class="sidebar-nav">
+                <a class="nav-item active" data-page="dashboard"><i class="fas fa-chart-pie"></i> Dashboard</a>
+                <a class="nav-item" data-page="printers"><i class="fas fa-server"></i> Printers</a>
+                <a class="nav-item" data-page="jobs"><i class="fas fa-tasks"></i> Print Jobs</a>
+                <a class="nav-item" data-page="users"><i class="fas fa-users"></i> Users</a>
+                <a class="nav-item" data-page="departments"><i class="fas fa-building"></i> Departments</a>
+                <a class="nav-item" data-page="reports"><i class="fas fa-file-alt"></i> Reports</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="avatar" id="sidebarAvatar">A</div>
+                    <div>
+                        <div class="name" id="sidebarName">Admin</div>
+                        <div class="role" id="sidebarRole">Administrator</div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm btn-block btn-logout" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+                <div style="margin-top:0.5rem;font-size:0.65rem;color:var(--gray-400);text-align:center;">
+                    <i class="fas fa-mobile-alt"></i> Mobile Access Ready
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+
+            <!-- Mobile Header -->
+            <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;" class="mobile-only">
+                <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+                <span style="font-weight:600;font-size:1.1rem;color:var(--primary);">PrintFlow</span>
+                <span style="margin-left:auto;font-size:0.7rem;color:var(--gray-400);">
+                    <i class="fas fa-mobile-alt"></i> Mobile
+                </span>
+            </div>
+
+            <!-- ========================================================== -->
+            <!-- PAGE: DASHBOARD -->
+            <!-- ========================================================== -->
+            <section class="page-section active" id="page-dashboard">
+                <div class="page-header">
+                    <div>
+                        <h1><i class="fas fa-chart-pie" style="color:var(--primary);margin-right:0.5rem;"></i> Dashboard</h1>
+                        <div class="breadcrumb">Overview of your print ecosystem</div>
+                    </div>
+                    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                        <button class="btn btn-secondary btn-sm" onclick="refreshDashboard()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                        <span class="mobile-access-badge"><i class="fas fa-check-circle" style="color:var(--success);"></i> Mobile Ready</span>
+                    </div>
+                </div>
+
+                <div class="stats-grid" id="dashboardStats">
+                    <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-print"></i></div><div class="stat-info"><div class="label">Total Printers</div><div class="value" id="statPrinters">—</div></div></div>
+                    <div class="stat-card"><div class="stat-icon green"><i class="fas fa-check-circle"></i></div><div class="stat-info"><div class="label">Jobs Today</div><div class="value" id="statJobsToday">—</div></div></div>
+                    <div class="stat-card"><div class="stat-icon yellow"><i class="fas fa-clock"></i></div><div class="stat-info"><div class="label">Pending Jobs</div><div class="value" id="statPending">—</div></div></div>
+                    <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-users"></i></div><div class="stat-info"><div class="label">Active Users</div><div class="value" id="statUsers">—</div></div></div>
+                    <div class="stat-card"><div class="stat-icon red"><i class="fas fa-file-pdf"></i></div><div class="stat-info"><div class="label">Total Pages Printed</div><div class="value" id="statPages">—</div></div></div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:0.5rem;">
+                    <div class="card">
+                        <div class="card-header"><h3><i class="fas fa-clock" style="color:var(--warning);margin-right:0.5rem;"></i> Recent Jobs</h3><span class="subtitle">Last 5</span></div>
+                        <div id="recentJobsList"><div class="text-muted" style="font-size:0.875rem;">Loading…</div></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><h3><i class="fas fa-server" style="color:var(--primary);margin-right:0.5rem;"></i> Printer Status</h3><span class="subtitle">Overview</span></div>
+                        <div id="printerStatusList"><div class="text-muted" style="font-size:0.875rem;">Loading…</div></div>
+                    </div>
+                </div>
+
+                <div style="margin-top:1.5rem;font-size:0.75rem;color:var(--gray-400);text-align:center;border-top:1px solid var(--gray-100);padding-top:1rem;">
+                    <i class="fas fa-mobile-alt"></i> Optimized for desktop &amp; mobile · Data synced via Google Sheets
+                </div>
+            </section>
+
+            <!-- ========================================================== -->
+            <!-- PAGE: PRINTERS -->
+            <!-- ========================================================== -->
+            <section class="page-section" id="page-printers">
+                <div class="page-header">
+                    <div><h1><i class="fas fa-server" style="color:var(--primary);margin-right:0.5rem;"></i> Printers</h1><div class="breadcrumb">Manage your printer fleet</div></div>
+                    <button class="btn btn-primary btn-sm" onclick="openModal('printer')"><i class="fas fa-plus"></i> Add Printer</button>
+                </div>
+                <div class="toolbar">
+                    <div class="search-box"><i class="fas fa-search"></i><input type="text" class="form-control" id="printerSearch" placeholder="Search printers…" oninput="filterPrinters()" /></div>
+                    <button class="btn btn-secondary btn-sm" onclick="loadPrinters()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                </div>
+                <div class="card">
+                    <div class="table-wrap">
+                        <table><thead><tr><th>Name</th><th>Location</th><th>Model</th><th>IP Address</th><th>Status</th><th style="text-align:right;">Actions</th></tr></thead>
+                            <tbody id="printersTableBody"><tr><td colspan="6" class="text-center text-muted">Loading printers…</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================================== -->
+            <!-- PAGE: PRINT JOBS -->
+            <!-- ========================================================== -->
+            <section class="page-section" id="page-jobs">
+                <div class="page-header">
+                    <div><h1><i class="fas fa-tasks" style="color:var(--primary);margin-right:0.5rem;"></i> Print Jobs</h1><div class="breadcrumb">Submit &amp; track print jobs</div></div>
+                    <button class="btn btn-primary btn-sm" onclick="openModal('job')"><i class="fas fa-plus"></i> New Print Job</button>
+                </div>
+                <div class="toolbar">
+                    <div class="search-box"><i class="fas fa-search"></i><input type="text" class="form-control" id="jobSearch" placeholder="Search jobs…" oninput="filterJobs()" /></div>
+                    <select class="form-control" style="width:auto;min-width:120px;" id="jobStatusFilter" onchange="filterJobs()">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="printing">Printing</option>
+                        <option value="completed">Completed</option>
+                        <option value="failed">Failed</option>
+                    </select>
+                    <button class="btn btn-secondary btn-sm" onclick="loadJobs()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                </div>
+                <div class="card">
+                    <div class="table-wrap">
+                        <table><thead><tr><th>Job ID</th><th>User</th><th>Printer</th><th>File</th><th>Pages</th><th>Copies</th><th>Status</th><th>Submitted</th><th style="text-align:right;">Actions</th></tr></thead>
+                            <tbody id="jobsTableBody"><tr><td colspan="9" class="text-center text-muted">Loading jobs…</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================================== -->
+            <!-- PAGE: USERS -->
+            <!-- ========================================================== -->
+            <section class="page-section" id="page-users">
+                <div class="page-header">
+                    <div><h1><i class="fas fa-users" style="color:var(--primary);margin-right:0.5rem;"></i> Users</h1><div class="breadcrumb">Manage system users</div></div>
+                    <button class="btn btn-primary btn-sm" onclick="openModal('user')"><i class="fas fa-plus"></i> Add User</button>
+                </div>
+                <div class="toolbar">
+                    <div class="search-box"><i class="fas fa-search"></i><input type="text" class="form-control" id="userSearch" placeholder="Search users…" oninput="filterUsers()" /></div>
+                    <button class="btn btn-secondary btn-sm" onclick="loadUsers()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                </div>
+                <div class="card">
+                    <div class="table-wrap">
+                        <table><thead><tr><th>Name</th><th>Email</th><th>Department</th><th>Role</th><th style="text-align:right;">Actions</th></tr></thead>
+                            <tbody id="usersTableBody"><tr><td colspan="5" class="text-center text-muted">Loading users…</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================================== -->
+            <!-- PAGE: DEPARTMENTS -->
+            <!-- ========================================================== -->
+            <section class="page-section" id="page-departments">
+                <div class="page-header">
+                    <div><h1><i class="fas fa-building" style="color:var(--primary);margin-right:0.5rem;"></i> Departments</h1><div class="breadcrumb">Organize by department</div></div>
+                    <button class="btn btn-primary btn-sm" onclick="openModal('department')"><i class="fas fa-plus"></i> Add Department</button>
+                </div>
+                <div class="toolbar">
+                    <div class="search-box"><i class="fas fa-search"></i><input type="text" class="form-control" id="deptSearch" placeholder="Search departments…" oninput="filterDepartments()" /></div>
+                    <button class="btn btn-secondary btn-sm" onclick="loadDepartments()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                </div>
+                <div class="card">
+                    <div class="table-wrap">
+                        <table><thead><tr><th>Name</th><th>Description</th><th>Created</th><th style="text-align:right;">Actions</th></tr></thead>
+                            <tbody id="departmentsTableBody"><tr><td colspan="4" class="text-center text-muted">Loading departments…</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================================== -->
+            <!-- PAGE: REPORTS -->
+            <!-- ========================================================== -->
+            <section class="page-section" id="page-reports">
+                <div class="page-header">
+                    <div><h1><i class="fas fa-file-alt" style="color:var(--primary);margin-right:0.5rem;"></i> Reports</h1><div class="breadcrumb">Generate print usage reports</div></div>
+                    <button class="btn btn-success btn-sm" onclick="generateReport()"><i class="fas fa-file-pdf"></i> Generate Report</button>
+                </div>
+                <div class="card" style="margin-bottom:1.5rem;">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                        <div class="form-group"><label>Date From</label><input type="date" class="form-control" id="reportDateFrom" /></div>
+                        <div class="form-group"><label>Date To</label><input type="date" class="form-control" id="reportDateTo" /></div>
+                        <div class="form-group"><label>Department</label><select class="form-control" id="reportDept"><option value="">All Departments</option></select></div>
+                        <div class="form-group"><label>Printer</label><select class="form-control" id="reportPrinter"><option value="">All Printers</option></select></div>
+                    </div>
+                    <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:0.5rem;">
+                        <button class="btn btn-primary btn-sm" onclick="generateReport()"><i class="fas fa-chart-bar"></i> Generate</button>
+                        <button class="btn btn-secondary btn-sm" onclick="sendEmailReport()"><i class="fas fa-envelope"></i> Email Report</button>
+                        <button class="btn btn-secondary btn-sm" onclick="resetReportFilters()"><i class="fas fa-undo"></i> Reset</button>
+                    </div>
+                </div>
+                <div class="card" id="reportResult">
+                    <div class="empty-state"><i class="fas fa-file-alt"></i><h4>No report generated yet</h4><p>Set filters and click Generate to see usage data.</p></div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MODAL CONTAINER -->
+    <!-- ============================================================ -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box" id="modalBox">
+            <div class="modal-title">
+                <span id="modalTitle">Modal</span>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody"><!-- dynamic --></div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- TOAST CONTAINER -->
+    <!-- ============================================================ -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ============================================================ -->
+    <!-- JAVASCRIPT -->
+    <!-- ============================================================ -->
+    <script>
+        // ================================================================
+        // CONFIGURATION
+        // ================================================================
+        // *** UPDATED: Your Google Apps Script Web App URL ***
+        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzBJvicspQdubsnGQN4XGrlaRYF73w_yAb6K4Wz-YFdyJCbvmkB0U883FZmIfes7p17/exec';
+
+        // Set to false to use the real backend
+        const USE_MOCK = false;
+
+        // ================================================================
+        // STATE
+        // ================================================================
+        let state = {
+            currentUser: null,
+            printers: [],
+            jobs: [],
+            users: [],
+            departments: [],
+            token: null,
+            viewMode: 'desktop'
+        };
+
+        // ================================================================
+        // UTILITY FUNCTIONS
+        // ================================================================
+        function $(id) { return document.getElementById(id); }
+
+        function qs(sel, ctx = document) { return ctx.querySelector(sel); }
+
+        function qsa(sel, ctx = document) { return [...ctx.querySelectorAll(sel)]; }
+
+        function formatDate(d) {
+            if (!d) return '—';
+            const dt = new Date(d);
+            return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit',
+                minute: '2-digit' });
+        }
+
+        function formatDateShort(d) {
+            if (!d) return '—';
+            const dt = new Date(d);
+            return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        function generateId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+
+        function getToday() {
+            const d = new Date();
+            return d.toISOString().split('T')[0];
+        }
+
+        function getNowISO() {
+            return new Date().toISOString();
+        }
+
+        function truncate(str, n = 30) {
+            return str && str.length > n ? str.slice(0, n) + '…' : str;
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function statusBadge(status) {
+            const map = {
+                'online': 'badge-success',
+                'offline': 'badge-danger',
+                'pending': 'badge-warning',
+                'printing': 'badge-info',
+                'completed': 'badge-success',
+                'failed': 'badge-danger'
+            };
+            const cls = map[status] || 'badge-info';
+            return `<span class="badge ${cls}">${status || 'unknown'}</span>`;
+        }
+
+        // ================================================================
+        // TOAST SYSTEM
+        // ================================================================
+        function showToast(message, type = 'info') {
+            const container = $('toastContainer');
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i> ${escapeHtml(message)}`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(20px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // ================================================================
+        // API CALLS (Apps Script with CORS)
+        // ================================================================
+        async function apiCall(action, data = {}) {
+            if (USE_MOCK) return mockApiCall(action, data);
+
+            const payload = { action, ...data };
+            if (state.token) payload.token = state.token;
+
+            try {
+                const resp = await fetch(APP_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await resp.json();
+                return result;
+            } catch (e) {
+                console.error('API error:', e);
+                showToast('API error: ' + e.message, 'error');
+                return { success: false, error: e.message };
+            }
+        }
+
+        // ================================================================
+        // MOCK API (for demo without backend)
+        // ================================================================
+        let mockData = {
+            users: [
+                { id: 'u1', name: 'Admin User', email: 'admin@printflow.com', password: 'admin123', department: 'IT',
+                    role: 'admin', created_at: getNowISO() },
+                { id: 'u2', name: 'John Doe', email: 'john@printflow.com', password: 'pass123', department: 'Sales',
+                    role: 'user', created_at: getNowISO() },
+                { id: 'u3', name: 'Jane Smith', email: 'jane@printflow.com', password: 'pass123', department: 'Marketing',
+                    role: 'user', created_at: getNowISO() }
+            ],
+            printers: [
+                { id: 'p1', name: 'HP LaserJet 4100', location: 'Floor 2 - East', model: 'LaserJet 4100',
+                    ip_address: '192.168.1.101', status: 'online', created_at: getNowISO() },
+                { id: 'p2', name: 'Brother MFC-L8900', location: 'Floor 1 - Reception', model: 'MFC-L8900',
+                    ip_address: '192.168.1.102', status: 'online', created_at: getNowISO() },
+                { id: 'p3', name: 'Xerox VersaLink C405', location: 'Floor 3 - West', model: 'VersaLink C405',
+                    ip_address: '192.168.1.103', status: 'offline', created_at: getNowISO() }
+            ],
+            departments: [
+                { id: 'd1', name: 'IT', description: 'Information Technology', created_at: getNowISO() },
+                { id: 'd2', name: 'Sales', description: 'Sales & Business Development', created_at: getNowISO() },
+                { id: 'd3', name: 'Marketing', description: 'Marketing & Communications', created_at: getNowISO() },
+                { id: 'd4', name: 'HR', description: 'Human Resources', created_at: getNowISO() }
+            ],
+            jobs: [
+                { id: 'j1', user_id: 'u2', printer_id: 'p1', department_id: 'd2', file_name: 'Q4_Report.pdf',
+                    pages: 12, copies: 2, status: 'completed', created_at: '2026-07-15T10:30:00Z',
+                printed_at: '2026-07-15T10:35:00Z' },
+                { id: 'j2', user_id: 'u3', printer_id: 'p2', department_id: 'd3', file_name: 'Campaign_Flyer.pdf',
+                    pages: 4, copies: 10, status: 'pending', created_at: '2026-07-16T09:15:00Z',
+                printed_at: null },
+                { id: 'j3', user_id: 'u1', printer_id: 'p1', department_id: 'd1', file_name: 'Server_Logs.pdf',
+                    pages: 45, copies: 1, status: 'printing', created_at: '2026-07-16T11:00:00Z',
+                    printed_at: null },
+                { id: 'j4', user_id: 'u2', printer_id: 'p3', department_id: 'd2', file_name: 'Proposal.pdf',
+                    pages: 8, copies: 3, status: 'failed', created_at: '2026-07-15T14:20:00Z',
+                    printed_at: null },
+                { id: 'j5', user_id: 'u3', printer_id: 'p2', department_id: 'd3', file_name: 'Newsletter.pdf',
+                    pages: 6, copies: 5, status: 'completed', created_at: '2026-07-14T16:45:00Z',
+                    printed_at: '2026-07-14T16:50:00Z' }
+            ]
+        };
+
+        function mockApiCall(action, data) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    let result = { success: true };
+                    switch (action) {
+                        case 'login': {
+                            const user = mockData.users.find(u => u.email === data.email && u.password === data
+                            .password);
+                            if (user) {
+                                const { password, ...safeUser } = user;
+                                result.user = safeUser;
+                                result.token = 'mock-token-' + Date.now();
+                            } else {
+                                result.success = false;
+                                result.error = 'Invalid credentials';
+                            }
+                            break;
+                        }
+                        case 'getUsers':
+                            result.users = mockData.users.map(({ password, ...u }) => u);
+                            break;
+                        case 'addUser': {
+                            const newUser = {
+                                id: 'u' + Date.now(),
+                                ...data,
+                                created_at: getNowISO()
+                            };
+                            mockData.users.push(newUser);
+                            const { password, ...safe } = newUser;
+                            result.user = safe;
+                            break;
+                        }
+                        case 'updateUser': {
+                            const idx = mockData.users.findIndex(u => u.id === data.id);
+                            if (idx > -1) {
+                                mockData.users[idx] = { ...mockData.users[idx], ...data };
+                                const { password, ...safe } = mockData.users[idx];
+                                result.user = safe;
+                            } else {
+                                result.success = false;
+                                result.error = 'User not found';
+                            }
+                            break;
+                        }
+                        case 'deleteUser': {
+                            mockData.users = mockData.users.filter(u => u.id !== data.id);
+                            break;
+                        }
+                        case 'getPrinters':
+                            result.printers = mockData.printers;
+                            break;
+                        case 'addPrinter': {
+                            const newPrinter = { id: 'p' + Date.now(), ...data, created_at: getNowISO() };
+                            mockData.printers.push(newPrinter);
+                            result.printer = newPrinter;
+                            break;
+                        }
+                        case 'updatePrinter': {
+                            const idx = mockData.printers.findIndex(p => p.id === data.id);
+                            if (idx > -1) {
+                                mockData.printers[idx] = { ...mockData.printers[idx], ...data };
+                                result.printer = mockData.printers[idx];
+                            } else {
+                                result.success = false;
+                                result.error = 'Printer not found';
+                            }
+                            break;
+                        }
+                        case 'deletePrinter': {
+                            mockData.printers = mockData.printers.filter(p => p.id !== data.id);
+                            break;
+                        }
+                        case 'getDepartments':
+                            result.departments = mockData.departments;
+                            break;
+                        case 'addDepartment': {
+                            const newDept = { id: 'd' + Date.now(), ...data, created_at: getNowISO() };
+                            mockData.departments.push(newDept);
+                            result.department = newDept;
+                            break;
+                        }
+                        case 'updateDepartment': {
+                            const idx = mockData.departments.findIndex(d => d.id === data.id);
+                            if (idx > -1) {
+                                mockData.departments[idx] = { ...mockData.departments[idx], ...data };
+                                result.department = mockData.departments[idx];
+                            } else {
+                                result.success = false;
+                                result.error = 'Department not found';
+                            }
+                            break;
+                        }
+                        case 'deleteDepartment': {
+                            mockData.departments = mockData.departments.filter(d => d.id !== data.id);
+                            break;
+                        }
+                        case 'getJobs':
+                            result.jobs = mockData.jobs;
+                            break;
+                        case 'addJob': {
+                            const newJob = {
+                                id: 'j' + Date.now(),
+                                ...data,
+                                created_at: getNowISO(),
+                                printed_at: null
+                            };
+                            mockData.jobs.push(newJob);
+                            result.job = newJob;
+                            break;
+                        }
+                        case 'updateJob': {
+                            const idx = mockData.jobs.findIndex(j => j.id === data.id);
+                            if (idx > -1) {
+                                mockData.jobs[idx] = { ...mockData.jobs[idx], ...data };
+                                result.job = mockData.jobs[idx];
+                            } else {
+                                result.success = false;
+                                result.error = 'Job not found';
+                            }
+                            break;
+                        }
+                        case 'deleteJob': {
+                            mockData.jobs = mockData.jobs.filter(j => j.id !== data.id);
+                            break;
+                        }
+                        case 'getDashboardStats': {
+                            const today = getToday();
+                            const todayJobs = mockData.jobs.filter(j => j.created_at && j.created_at.startsWith(today));
+                            const pending = mockData.jobs.filter(j => j.status === 'pending' || j.status === 'printing');
+                            const totalPages = mockData.jobs.reduce((sum, j) => sum + (j.pages * j.copies || 0), 0);
+                            result.stats = {
+                                printers: mockData.printers.length,
+                                jobsToday: todayJobs.length,
+                                pending: pending.length,
+                                users: mockData.users.length,
+                                pages: totalPages
+                            };
+                            break;
+                        }
+                        case 'getRecentJobs': {
+                            result.jobs = [...mockData.jobs].sort((a, b) =>
+                                new Date(b.created_at) - new Date(a.created_at)
+                            ).slice(0, 5);
+                            break;
+                        }
+                        case 'getPrinterStatus': {
+                            result.printers = mockData.printers.map(p => ({
+                                id: p.id,
+                                name: p.name,
+                                status: p.status,
+                                location: p.location
+                            }));
+                            break;
+                        }
+                        case 'generateReport': {
+                            let filtered = [...mockData.jobs];
+                            if (data.department) {
+                                filtered = filtered.filter(j => j.department_id === data.department);
+                            }
+                            if (data.printer) {
+                                filtered = filtered.filter(j => j.printer_id === data.printer);
+                            }
+                            if (data.dateFrom) {
+                                filtered = filtered.filter(j => j.created_at >= data.dateFrom);
+                            }
+                            if (data.dateTo) {
+                                filtered = filtered.filter(j => j.created_at <= data.dateTo);
+                            }
+                            result.report = {
+                                totalJobs: filtered.length,
+                                totalPages: filtered.reduce((s, j) => s + (j.pages * j.copies || 0), 0),
+                                byStatus: {
+                                    pending: filtered.filter(j => j.status === 'pending').length,
+                                    printing: filtered.filter(j => j.status === 'printing').length,
+                                    completed: filtered.filter(j => j.status === 'completed').length,
+                                    failed: filtered.filter(j => j.status === 'failed').length
+                                },
+                                jobs: filtered
+                            };
+                            break;
+                        }
+                        case 'sendEmailReport': {
+                            result.sent = true;
+                            result.message = 'Report sent to admin@printflow.com';
+                            break;
+                        }
+                        default:
+                            result.success = false;
+                            result.error = 'Unknown action: ' + action;
+                    }
+                    resolve(result);
+                }, 300);
+            });
+        }
+
+        // ================================================================
+        // AUTH
+        // ================================================================
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = $('loginEmail').value.trim();
+            const password = $('loginPassword').value.trim();
+            const errEl = $('loginError');
+
+            if (!email || !password) {
+                errEl.textContent = 'Please enter email and password.';
+                return;
+            }
+
+            errEl.textContent = '';
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner spinner-sm"></span> Signing in…';
+
+            const result = await apiCall('login', { email, password });
+
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+
+            if (result.success && result.user) {
+                state.currentUser = result.user;
+                state.token = result.token;
+                showToast('Welcome back, ' + result.user.name + '!', 'success');
+                initApp();
+            } else {
+                errEl.textContent = result.error || 'Invalid email or password.';
+            }
+        }
+
+        function handleLogout() {
+            state.currentUser = null;
+            state.token = null;
+            $('app').classList.remove('active');
+            $('loginPage').style.display = 'flex';
+            $('loginForm').reset();
+            $('loginError').textContent = '';
+            showToast('Logged out.', 'info');
+        }
+
+        // ================================================================
+        // APP INIT
+        // ================================================================
+        function initApp() {
+            $('loginPage').style.display = 'none';
+            $('app').classList.add('active');
+
+            // Set sidebar user info
+            const u = state.currentUser;
+            if (u) {
+                $('sidebarName').textContent = u.name || 'User';
+                $('sidebarRole').textContent = u.role || 'User';
+                $('sidebarAvatar').textContent = (u.name || 'U').charAt(0).toUpperCase();
+            }
+
+            // Load all data
+            loadDashboard();
+            loadPrinters();
+            loadJobs();
+            loadUsers();
+            loadDepartments();
+
+            // Populate report filters
+            populateReportFilters();
+
+            // Show dashboard by default
+            navigateTo('dashboard');
+
+            // Mobile sidebar toggle
+            $('sidebarToggle').addEventListener('click', () => {
+                $('sidebar').classList.toggle('open');
+                $('sidebarOverlay').classList.toggle('active');
+            });
+            $('sidebarOverlay').addEventListener('click', () => {
+                $('sidebar').classList.remove('open');
+                $('sidebarOverlay').classList.remove('active');
+            });
+
+            // Nav clicks
+            qsa('.sidebar-nav .nav-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = item.dataset.page;
+                    navigateTo(page);
+                    // Close mobile sidebar
+                    $('sidebar').classList.remove('open');
+                    $('sidebarOverlay').classList.remove('active');
+                });
+            });
+
+            // Logout
+            $('logoutBtn').addEventListener('click', handleLogout);
+        }
+
+        function navigateTo(page) {
+            // Update nav
+            qsa('.sidebar-nav .nav-item').forEach(el => el.classList.remove('active'));
+            const navItem = qs(`.sidebar-nav .nav-item[data-page="${page}"]`);
+            if (navItem) navItem.classList.add('active');
+
+            // Update pages
+            qsa('.page-section').forEach(el => el.classList.remove('active'));
+            const pageEl = $('page-' + page);
+            if (pageEl) pageEl.classList.add('active');
+
+            // If reports, refresh filters
+            if (page === 'reports') {
+                populateReportFilters();
+            }
+        }
+
+        // ================================================================
+        // DASHBOARD
+        // ================================================================
+        async function loadDashboard() {
+            // Stats
+            const stats = await apiCall('getDashboardStats');
+            if (stats.success && stats.stats) {
+                $('statPrinters').textContent = stats.stats.printers || 0;
+                $('statJobsToday').textContent = stats.stats.jobsToday || 0;
+                $('statPending').textContent = stats.stats.pending || 0;
+                $('statUsers').textContent = stats.stats.users || 0;
+                $('statPages').textContent = stats.stats.pages || 0;
+            } else {
+                $('statPrinters').textContent = '—';
+                $('statJobsToday').textContent = '—';
+                $('statPending').textContent = '—';
+                $('statUsers').textContent = '—';
+                $('statPages').textContent = '—';
+            }
+
+            // Recent jobs
+            const recent = await apiCall('getRecentJobs');
+            if (recent.success && recent.jobs) {
+                const list = $('recentJobsList');
+                if (recent.jobs.length === 0) {
+                    list.innerHTML = '<div class="text-muted" style="font-size:0.875rem;">No recent jobs.</div>';
+                } else {
+                    list.innerHTML = recent.jobs.map(j => `
+                        <div style="display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid var(--gray-100);font-size:0.8rem;">
+                            <span><strong>${escapeHtml(j.file_name || 'Untitled')}</strong> · ${escapeHtml(j.pages || 0)} pages · ${j.copies || 1} copies</span>
+                            <span>${statusBadge(j.status)} ${formatDateShort(j.created_at)}</span>
+                        </div>
+                    `).join('');
+                }
+            } else {
+                $('recentJobsList').innerHTML = '<div class="text-muted" style="font-size:0.875rem;">Could not load recent jobs.</div>';
+            }
+
+            // Printer status
+            const ps = await apiCall('getPrinterStatus');
+            if (ps.success && ps.printers) {
+                const list = $('printerStatusList');
+                if (ps.printers.length === 0) {
+                    list.innerHTML = '<div class="text-muted" style="font-size:0.875rem;">No printers configured.</div>';
+                } else {
+                    list.innerHTML = ps.printers.map(p => `
+                        <div style="display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid var(--gray-100);font-size:0.8rem;">
+                            <span><span class="status-dot ${p.status === 'online' ? 'online' : 'offline'}"></span> ${escapeHtml(p.name)}</span>
+                            <span class="text-muted">${escapeHtml(p.location || '')}</span>
+                            <span>${statusBadge(p.status)}</span>
+                        </div>
+                    `).join('');
+                }
+            } else {
+                $('printerStatusList').innerHTML = '<div class="text-muted" style="font-size:0.875rem;">Could not load printer status.</div>';
+            }
+        }
+
+        async function refreshDashboard() {
+            showToast('Refreshing dashboard…', 'info');
+            await loadDashboard();
+            showToast('Dashboard updated.', 'success');
+        }
+
+        // ================================================================
+        // PRINTERS
+        // ================================================================
+        async function loadPrinters() {
+            const result = await apiCall('getPrinters');
+            if (result.success && result.printers) {
+                state.printers = result.printers;
+                renderPrinters(result.printers);
+            } else {
+                state.printers = [];
+                renderPrinters([]);
+            }
+        }
+
+        function renderPrinters(list) {
+            const tbody = $('printersTableBody');
+            if (!list || list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">No printers found.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = list.map(p => `
+                <tr>
+                    <td><strong>${escapeHtml(p.name)}</strong></td>
+                    <td>${escapeHtml(p.location || '—')}</td>
+                    <td>${escapeHtml(p.model || '—')}</td>
+                    <td>${escapeHtml(p.ip_address || '—')}</td>
+                    <td>${statusBadge(p.status)}</td>
+                    <td style="text-align:right;">
+                        <button class="btn btn-secondary btn-sm" onclick="editPrinter('${p.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="deletePrinter('${p.id}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterPrinters() {
+            const q = $('printerSearch').value.toLowerCase();
+            const filtered = state.printers.filter(p =>
+                p.name.toLowerCase().includes(q) ||
+                (p.location || '').toLowerCase().includes(q) ||
+                (p.model || '').toLowerCase().includes(q)
+            );
+            renderPrinters(filtered);
+        }
+
+        async function editPrinter(id) {
+            const printer = state.printers.find(p => p.id === id);
+            if (!printer) return showToast('Printer not found.', 'error');
+            openModal('printer', printer);
+        }
+
+        async function deletePrinter(id) {
+            if (!confirm('Delete this printer?')) return;
+            const result = await apiCall('deletePrinter', { id });
+            if (result.success) {
+                showToast('Printer deleted.', 'success');
+                loadPrinters();
+                loadDashboard();
+            } else {
+                showToast(result.error || 'Delete failed.', 'error');
+            }
+        }
+
+        // ================================================================
+        // JOBS
+        // ================================================================
+        async function loadJobs() {
+            const result = await apiCall('getJobs');
+            if (result.success && result.jobs) {
+                state.jobs = result.jobs;
+                renderJobs(result.jobs);
+            } else {
+                state.jobs = [];
+                renderJobs([]);
+            }
+        }
+
+        function renderJobs(list) {
+            const tbody = $('jobsTableBody');
+            if (!list || list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" class="text-center text-muted">No print jobs found.</td></tr>`;
+                return;
+            }
+            // Map user & printer names
+            const userMap = {};
+            state.users.forEach(u => userMap[u.id] = u.name || u.email);
+            const printerMap = {};
+            state.printers.forEach(p => printerMap[p.id] = p.name);
+
+            tbody.innerHTML = list.map(j => `
+                <tr>
+                    <td><span class="chip">${escapeHtml(j.id.slice(0,8))}</span></td>
+                    <td>${escapeHtml(userMap[j.user_id] || 'Unknown')}</td>
+                    <td>${escapeHtml(printerMap[j.printer_id] || 'Unknown')}</td>
+                    <td class="text-truncate" title="${escapeHtml(j.file_name || '')}">${escapeHtml(truncate(j.file_name || 'Untitled', 20))}</td>
+                    <td>${j.pages || 0}</td>
+                    <td>${j.copies || 1}</td>
+                    <td>${statusBadge(j.status)}</td>
+                    <td>${formatDateShort(j.created_at)}</td>
+                    <td style="text-align:right;">
+                        <button class="btn btn-secondary btn-sm" onclick="editJob('${j.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteJob('${j.id}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterJobs() {
+            const q = $('jobSearch').value.toLowerCase();
+            const statusFilter = $('jobStatusFilter').value;
+            const filtered = state.jobs.filter(j => {
+                const matchText = (j.file_name || '').toLowerCase().includes(q) ||
+                    (j.id || '').toLowerCase().includes(q);
+                const matchStatus = !statusFilter || j.status === statusFilter;
+                return matchText && matchStatus;
+            });
+            renderJobs(filtered);
+        }
+
+        async function editJob(id) {
+            const job = state.jobs.find(j => j.id === id);
+            if (!job) return showToast('Job not found.', 'error');
+            openModal('job', job);
+        }
+
+        async function deleteJob(id) {
+            if (!confirm('Delete this print job?')) return;
+            const result = await apiCall('deleteJob', { id });
+            if (result.success) {
+                showToast('Job deleted.', 'success');
+                loadJobs();
+                loadDashboard();
+            } else {
+                showToast(result.error || 'Delete failed.', 'error');
+            }
+        }
+
+        // ================================================================
+        // USERS
+        // ================================================================
+        async function loadUsers() {
+            const result = await apiCall('getUsers');
+            if (result.success && result.users) {
+                state.users = result.users;
+                renderUsers(result.users);
+            } else {
+                state.users = [];
+                renderUsers([]);
+            }
+        }
+
+        function renderUsers(list) {
+            const tbody = $('usersTableBody');
+            if (!list || list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">No users found.</td></tr>`;
+                return;
+            }
+            const deptMap = {};
+            state.departments.forEach(d => deptMap[d.id] = d.name);
+
+            tbody.innerHTML = list.map(u => `
+                <tr>
+                    <td><strong>${escapeHtml(u.name || '—')}</strong></td>
+                    <td>${escapeHtml(u.email || '—')}</td>
+                    <td>${escapeHtml(deptMap[u.department] || u.department || '—')}</td>
+                    <td><span class="chip">${escapeHtml(u.role || 'user')}</span></td>
+                    <td style="text-align:right;">
+                        <button class="btn btn-secondary btn-sm" onclick="editUser('${u.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteUser('${u.id}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterUsers() {
+            const q = $('userSearch').value.toLowerCase();
+            const filtered = state.users.filter(u =>
+                (u.name || '').toLowerCase().includes(q) ||
+                (u.email || '').toLowerCase().includes(q)
+            );
+            renderUsers(filtered);
+        }
+
+        async function editUser(id) {
+            const user = state.users.find(u => u.id === id);
+            if (!user) return showToast('User not found.', 'error');
+            openModal('user', user);
+        }
+
+        async function deleteUser(id) {
+            if (!confirm('Delete this user?')) return;
+            const result = await apiCall('deleteUser', { id });
+            if (result.success) {
+                showToast('User deleted.', 'success');
+                loadUsers();
+                loadDashboard();
+            } else {
+                showToast(result.error || 'Delete failed.', 'error');
+            }
+        }
+
+        // ================================================================
+        // DEPARTMENTS
+        // ================================================================
+        async function loadDepartments() {
+            const result = await apiCall('getDepartments');
+            if (result.success && result.departments) {
+                state.departments = result.departments;
+                renderDepartments(result.departments);
+            } else {
+                state.departments = [];
+                renderDepartments([]);
+            }
+        }
+
+        function renderDepartments(list) {
+            const tbody = $('departmentsTableBody');
+            if (!list || list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">No departments found.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = list.map(d => `
+                <tr>
+                    <td><strong>${escapeHtml(d.name)}</strong></td>
+                    <td>${escapeHtml(d.description || '—')}</td>
+                    <td>${formatDateShort(d.created_at)}</td>
+                    <td style="text-align:right;">
+                        <button class="btn btn-secondary btn-sm" onclick="editDepartment('${d.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteDepartment('${d.id}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterDepartments() {
+            const q = $('deptSearch').value.toLowerCase();
+            const filtered = state.departments.filter(d =>
+                (d.name || '').toLowerCase().includes(q) ||
+                (d.description || '').toLowerCase().includes(q)
+            );
+            renderDepartments(filtered);
+        }
+
+        async function editDepartment(id) {
+            const dept = state.departments.find(d => d.id === id);
+            if (!dept) return showToast('Department not found.', 'error');
+            openModal('department', dept);
+        }
+
+        async function deleteDepartment(id) {
+            if (!confirm('Delete this department?')) return;
+            const result = await apiCall('deleteDepartment', { id });
+            if (result.success) {
+                showToast('Department deleted.', 'success');
+                loadDepartments();
+                loadDashboard();
+            } else {
+                showToast(result.error || 'Delete failed.', 'error');
+            }
+        }
+
+        // ================================================================
+        // REPORTS
+        // ================================================================
+        async function populateReportFilters() {
+            // Departments
+            const deptSelect = $('reportDept');
+            const currentVal = deptSelect.value;
+            deptSelect.innerHTML = '<option value="">All Departments</option>' +
+                state.departments.map(d => `<option value="${d.id}">${escapeHtml(d.name)}</option>`).join('');
+            if (currentVal) deptSelect.value = currentVal;
+
+            // Printers
+            const printerSelect = $('reportPrinter');
+            const currentPrinter = printerSelect.value;
+            printerSelect.innerHTML = '<option value="">All Printers</option>' +
+                state.printers.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
+            if (currentPrinter) printerSelect.value = currentPrinter;
+
+            // Default dates
+            if (!$('reportDateFrom').value) {
+                const d = new Date();
+                d.setDate(d.getDate() - 30);
+                $('reportDateFrom').value = d.toISOString().split('T')[0];
+            }
+            if (!$('reportDateTo').value) {
+                $('reportDateTo').value = getToday();
+            }
+        }
+
+        function resetReportFilters() {
+            $('reportDateFrom').value = '';
+            $('reportDateTo').value = '';
+            $('reportDept').value = '';
+            $('reportPrinter').value = '';
+            $('reportResult').innerHTML =
+                `<div class="empty-state"><i class="fas fa-file-alt"></i><h4>No report generated yet</h4><p>Set filters and click Generate to see usage data.</p></div>`;
+        }
+
+        async function generateReport() {
+            const dateFrom = $('reportDateFrom').value;
+            const dateTo = $('reportDateTo').value;
+            const department = $('reportDept').value;
+            const printer = $('reportPrinter').value;
+
+            showToast('Generating report…', 'info');
+            const result = await apiCall('generateReport', { dateFrom, dateTo, department, printer });
+
+            if (result.success && result.report) {
+                const r = result.report;
+                const container = $('reportResult');
+
+                let tableRows = '';
+                if (r.jobs && r.jobs.length > 0) {
+                    const userMap = {};
+                    state.users.forEach(u => userMap[u.id] = u.name || u.email);
+                    const printerMap = {};
+                    state.printers.forEach(p => printerMap[p.id] = p.name);
+                    const deptMap = {};
+                    state.departments.forEach(d => deptMap[d.id] = d.name);
+
+                    tableRows = r.jobs.map(j => `
+                        <tr>
+                            <td>${escapeHtml(j.file_name || 'Untitled')}</td>
+                            <td>${escapeHtml(userMap[j.user_id] || 'Unknown')}</td>
+                            <td>${escapeHtml(printerMap[j.printer_id] || 'Unknown')}</td>
+                            <td>${escapeHtml(deptMap[j.department_id] || 'Unknown')}</td>
+                            <td>${j.pages || 0}</td>
+                            <td>${j.copies || 1}</td>
+                            <td>${statusBadge(j.status)}</td>
+                            <td>${formatDateShort(j.created_at)}</td>
+                        </tr>
+                    `).join('');
+                }
+
+                container.innerHTML = `
+                    <div style="margin-bottom:1rem;">
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:0.75rem;">
+                            <div><span class="text-muted" style="font-size:0.75rem;">Total Jobs</span><br><strong>${r.totalJobs}</strong></div>
+                            <div><span class="text-muted" style="font-size:0.75rem;">Total Pages</span><br><strong>${r.totalPages}</strong></div>
+                            <div><span class="text-muted" style="font-size:0.75rem;">Pending</span><br><strong>${r.byStatus.pending || 0}</strong></div>
+                            <div><span class="text-muted" style="font-size:0.75rem;">Completed</span><br><strong>${r.byStatus.completed || 0}</strong></div>
+                            <div><span class="text-muted" style="font-size:0.75rem;">Failed</span><br><strong>${r.byStatus.failed || 0}</strong></div>
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>File</th><th>User</th><th>Printer</th><th>Department</th><th>Pages</th><th>Copies</th><th>Status</th><th>Date</th></tr></thead>
+                            <tbody>${tableRows || '<tr><td colspan="8" class="text-center text-muted">No jobs match the filters.</td></tr>'}</tbody>
+                        </table>
+                    </div>
+                `;
+                showToast('Report generated successfully!', 'success');
+            } else {
+                showToast(result.error || 'Failed to generate report.', 'error');
+            }
+        }
+
+        async function sendEmailReport() {
+            showToast('Sending email report…', 'info');
+            const result = await apiCall('sendEmailReport', {});
+            if (result.success) {
+                showToast(result.message || 'Report emailed successfully!', 'success');
+            } else {
+                showToast(result.error || 'Failed to send email.', 'error');
+            }
+        }
+
+        // ================================================================
+        // MODAL SYSTEM (Unified CRUD)
+        // ================================================================
+        function openModal(type, data = null) {
+            const overlay = $('modalOverlay');
+            const title = $('modalTitle');
+            const body = $('modalBody');
+
+            // Build form based on type
+            let html = '';
+            const isEdit = !!data && data.id;
+
+            switch (type) {
+                case 'printer': {
+                    title.textContent = isEdit ? 'Edit Printer' : 'Add Printer';
+                    html = `
+                        <form id="modalForm">
+                            <input type="hidden" name="id" value="${isEdit ? data.id : ''}" />
+                            <div class="form-group"><label>Printer Name *</label><input type="text" name="name" class="form-control" value="${isEdit ? escapeHtml(data.name) : ''}" required /></div>
+                            <div class="form-group"><label>Location</label><input type="text" name="location" class="form-control" value="${isEdit ? escapeHtml(data.location || '') : ''}" /></div>
+                            <div class="form-group"><label>Model</label><input type="text" name="model" class="form-control" value="${isEdit ? escapeHtml(data.model || '') : ''}" /></div>
+                            <div class="form-group"><label>IP Address</label><input type="text" name="ip_address" class="form-control" value="${isEdit ? escapeHtml(data.ip_address || '') : ''}" /></div>
+                            <div class="form-group"><label>Status</label>
+                                <select name="status" class="form-control">
+                                    <option value="online" ${isEdit && data.status === 'online' ? 'selected' : ''}>Online</option>
+                                    <option value="offline" ${isEdit && data.status === 'offline' ? 'selected' : ''}>Offline</option>
+                                    <option value="maintenance" ${isEdit && data.status === 'maintenance' ? 'selected' : ''}>Maintenance</option>
+                                </select>
+                            </div>
+                            <div class="modal-actions">
+                                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                                <button type="submit" class="btn btn-primary">${isEdit ? 'Update' : 'Create'}</button>
+                            </div>
+                        </form>
+                    `;
+                    break;
+                }
+                case 'job': {
+                    title.textContent = isEdit ? 'Edit Print Job' : 'New Print Job';
+                    const userOpts = state.users.map(u => `<option value="${u.id}" ${isEdit && data.user_id === u.id ? 'selected' : ''}>${escapeHtml(u.name || u.email)}</option>`).join(
+                        '');
+                    const printerOpts = state.printers.map(p => `<option value="${p.id}" ${isEdit && data.printer_id === p.id ? 'selected' : ''}>${escapeHtml(p.name)}</option>`).join(
+                        '');
+                    const deptOpts = state.departments.map(d => `<option value="${d.id}" ${isEdit && data.department_id === d.id ? 'selected' : ''}>${escapeHtml(d.name)}</option>`).join(
+                        '');
+                    html = `
+                        <form id="modalForm">
+                            <input type="hidden" name="id" value="${isEdit ? data.id : ''}" />
+                            <div class="form-group"><label>User *</label><select name="user_id" class="form-control" required><option value="">Select User</option>${userOpts}</select></div>
+                            <div class="form-group"><label>Printer *</label><select name="printer_id" class="form-control" required><option value="">Select Printer</option>${printerOpts}</select></div>
+                            <div class="form-group"><label>Department</label><select name="department_id" class="form-control"><option value="">Select Department</option>${deptOpts}</select></div>
+                            <div class="form-group"><label>File Name *</label><input type="text" name="file_name" class="form-control" value="${isEdit ? escapeHtml(data.file_name || '') : ''}" required /></div>
+                            <div class="form-group"><label>Pages *</label><input type="number" name="pages" class="form-control" value="${isEdit ? data.pages : 1}" min="1" required /></div>
+                            <div class="form-group"><label>Copies</label><input type="number" name="copies" class="form-control" value="${isEdit ? data.copies : 1}" min="1" /></div>
+                            <div class="form-group"><label>Status</label>
+                                <select name="status" class="form-control">
+                                    <option value="pending" ${isEdit && data.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                    <option value="printing" ${isEdit && data.status === 'printing' ? 'selected' : ''}>Printing</option>
+                                    <option value="completed" ${isEdit && data.status === 'completed' ? 'selected' : ''}>Completed</option>
+                                    <option value="failed" ${isEdit && data.status === 'failed' ? 'selected' : ''}>Failed</option>
+                                </select>
+                            </div>
+                            <div class="modal-actions">
+                                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                                <button type="submit" class="btn btn-primary">${isEdit ? 'Update' : 'Create'}</button>
+                            </div>
+                        </form>
+                    `;
+                    break;
+                }
+                case 'user': {
+                    title.textContent = isEdit ? 'Edit User' : 'Add User';
+                    const deptOpts = state.departments.map(d => `<option value="${d.id}" ${isEdit && data.department === d.id ? 'selected' : ''}>${escapeHtml(d.name)}</option>`).join(
+                        '');
+                    html = `
+                        <form id="modalForm">
+                            <input type="hidden" name="id" value="${isEdit ? data.id : ''}" />
+                            <div class="form-group"><label>Full Name *</label><input type="text" name="name" class="form-control" value="${isEdit ? escapeHtml(data.name || '') : ''}" required /></div>
+                            <div class="form-group"><label>Email *</label><input type="email" name="email" class="form-control" value="${isEdit ? escapeHtml(data.email || '') : ''}" required /></div>
+                            ${!isEdit ? `<div class="form-group"><label>Password *</label><input type="password" name="password" class="form-control" placeholder="Min 6 chars" required /></div>` : `<div class="form-group"><label>New Password (leave blank to keep)</label><input type="password" name="password" class="form-control" placeholder="Min 6 chars" /></div>`}
+                            <div class="form-group"><label>Department</label><select name="department" class="form-control"><option value="">None</option>${deptOpts}</select></div>
+                            <div class="form-group"><label>Role</label>
+                                <select name="role" class="form-control">
+                                    <option value="user" ${isEdit && data.role === 'user' ? 'selected' : ''}>User</option>
+                                    <option value="admin" ${isEdit && data.role === 'admin' ? 'selected' : ''}>Admin</option>
+                                </select>
+                            </div>
+                            <div class="modal-actions">
+                                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                                <button type="submit" class="btn btn-primary">${isEdit ? 'Update' : 'Create'}</button>
+                            </div>
+                        </form>
+                    `;
+                    break;
+                }
+                case 'department': {
+                    title.textContent = isEdit ? 'Edit Department' : 'Add Department';
+                    html = `
+                        <form id="modalForm">
+                            <input type="hidden" name="id" value="${isEdit ? data.id : ''}" />
+                            <div class="form-group"><label>Department Name *</label><input type="text" name="name" class="form-control" value="${isEdit ? escapeHtml(data.name || '') : ''}" required /></div>
+                            <div class="form-group"><label>Description</label><textarea name="description" class="form-control">${isEdit ? escapeHtml(data.description || '') : ''}</textarea></div>
+                            <div class="modal-actions">
+                                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                                <button type="submit" class="btn btn-primary">${isEdit ? 'Update' : 'Create'}</button>
+                            </div>
+                        </form>
+                    `;
+                    break;
+                }
+                default: {
+                    showToast('Unknown modal type.', 'error');
+                    return;
+                }
+            }
+
+            body.innerHTML = html;
+            overlay.classList.add('active');
+
+            // Handle form submit
+            const form = $('modalForm');
+            if (form) {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(form);
+                    const payload = Object.fromEntries(formData.entries());
+
+                    // Determine action
+                    let action = '';
+                    const isEditMode = !!payload.id;
+
+                    switch (type) {
+                        case 'printer':
+                            action = isEditMode ? 'updatePrinter' : 'addPrinter';
+                            break;
+                        case 'job':
+                            action = isEditMode ? 'updateJob' : 'addJob';
+                            // Ensure numeric fields
+                            payload.pages = parseInt(payload.pages) || 1;
+                            payload.copies = parseInt(payload.copies) || 1;
+                            break;
+                        case 'user':
+                            action = isEditMode ? 'updateUser' : 'addUser';
+                            if (!payload.password && !isEditMode) {
+                                showToast('Password is required for new users.', 'error');
+                                return;
+                            }
+                            break;
+                        case 'department':
+                            action = isEditMode ? 'updateDepartment' : 'addDepartment';
+                            break;
+                        default:
+                            return;
+                    }
+
+                    const btn = form.querySelector('button[type="submit"]');
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="spinner spinner-sm"></span> Saving…';
+
+                    const result = await apiCall(action, payload);
+
+                    btn.disabled = false;
+                    btn.innerHTML = isEditMode ? 'Update' : 'Create';
+
+                    if (result.success) {
+                        closeModal();
+                        showToast(`Saved successfully!`, 'success');
+                        // Refresh relevant data
+                        switch (type) {
+                            case 'printer':
+                                loadPrinters();
+                                break;
+                            case 'job':
+                                loadJobs();
+                                break;
+                            case 'user':
+                                loadUsers();
+                                break;
+                            case 'department':
+                                loadDepartments();
+                                break;
+                        }
+                        loadDashboard();
+                        populateReportFilters();
+                    } else {
+                        showToast(result.error || 'Save failed.', 'error');
+                    }
+                });
+            }
+        }
+
+        function closeModal() {
+            $('modalOverlay').classList.remove('active');
+        }
+
+        // Close modal on overlay click
+        $('modalOverlay').addEventListener('click', (e) => {
+            if (e.target === $('modalOverlay')) closeModal();
+        });
+
+        // ================================================================
+        // EVENT BINDING
+        // ================================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Login form
+            $('loginForm').addEventListener('submit', handleLogin);
+
+            // Check if already logged in (session)
+            // For demo, we stay on login page until user logs in.
+        });
+
+        // ================================================================
+        // MOBILE DETECTION
+        // ================================================================
+        function checkMobile() {
+            const isMobile = window.innerWidth <= 768;
+            document.querySelectorAll('.mobile-only').forEach(el => {
+                el.style.display = isMobile ? 'flex' : 'none';
+            });
+            if (isMobile) {
+                document.querySelector('.sidebar')?.classList.remove('open');
+                document.querySelector('.sidebar-overlay')?.classList.remove('active');
+            }
+        }
+        window.addEventListener('resize', checkMobile);
+        checkMobile();
+
+        // ================================================================
+        // KEYBOARD SHORTCUTS
+        // ================================================================
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'F5') {
+                e.preventDefault();
+                refreshDashboard();
+            }
+        });
+
+        // ================================================================
+        // BOOTSTRAP: Show login
+        // ================================================================
+        console.log('🚀 PrintFlow System loaded.');
+        console.log('📱 Mobile-ready · Google Sheets backend');
+        console.log('ℹ️  Backend URL: ' + APP_SCRIPT_URL);
+    </script>
+</body>
+</html>
