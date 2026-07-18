@@ -1283,10 +1283,14 @@
             if (state.token) payload.token = state.token;
 
             try {
+                // IMPORTANT: this must stay 'text/plain', not 'application/json'.
+                // application/json forces the browser to send a CORS preflight
+                // (OPTIONS request) first, which Apps Script web apps cannot
+                // answer correctly — so every request gets silently blocked.
+                // text/plain is a "simple request" and skips that step entirely.
                 const resp = await fetch(APP_SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'cors',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(payload)
                 });
                 const result = await resp.json();
