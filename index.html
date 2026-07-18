@@ -208,6 +208,13 @@
             cursor: not-allowed;
             transform: none;
         }
+        .btn-test {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+        .btn-test:hover {
+            background: #BFDBFE;
+        }
 
         /* ===== FORM ELEMENTS ===== */
         .form-group {
@@ -1817,6 +1824,9 @@
                     <td>${escapeHtml(p.ip_address || '—')}</td>
                     <td>${statusBadge(p.status)}</td>
                     <td style="text-align:right;">
+                        <button class="btn btn-test btn-sm" onclick="testPrinter('${p.id}')" title="Test connectivity">
+                            <i class="fas fa-wifi"></i> Test
+                        </button>
                         <button class="btn btn-secondary btn-sm" onclick="editPrinter('${p.id}')"><i class="fas fa-edit"></i></button>
                         <button class="btn btn-danger btn-sm" onclick="deletePrinter('${p.id}')"><i class="fas fa-trash"></i></button>
                     </td>
@@ -1832,6 +1842,70 @@
                 (p.model || '').toLowerCase().includes(q)
             );
             renderPrinters(filtered);
+        }
+
+        // ===== REAL-TIME PRINTER TEST (from browser) =====
+        async function testPrinter(id) {
+            const printer = state.printers.find(p => p.id === id);
+            if (!printer) {
+                showToast('Printer not found.', 'error');
+                return;
+            }
+            if (!printer.ip_address) {
+                showToast('No IP address set for this printer.', 'warning');
+                return;
+            }
+
+            const ip = printer.ip_address;
+            // Find the Test button for this printer to show loading state
+            const row = document.querySelector(`tr:has(button[onclick="testPrinter('${id}')"])`);
+            let testBtn = null;
+            if (row) {
+                testBtn = row.querySelector('button.btn-test');
+                if (testBtn) {
+                    testBtn.disabled = true;
+                    testBtn.innerHTML = '<span class="spinner spinner-sm"></span>';
+                }
+            }
+
+            try {
+                // Attempt to reach the printer's HTTP port (80) with a timeout
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 3000);
+                const resp = await fetch(`http://${ip}`, {
+                    method: 'HEAD',
+                    mode: 'no-cors',
+                    signal: controller.signal
+                });
+                clearTimeout(timeout);
+
+                // If we got here, the fetch succeeded (the printer is reachable)
+                showToast(`✅ ${printer.name} is ONLINE`, 'success');
+                // Update status in local state
+                const idx = state.printers.findIndex(p => p.id === id);
+                if (idx !== -1) {
+                    state.printers[idx].status = 'online';
+                    // Re-render to update badge immediately
+                    renderPrinters(state.printers);
+                    // Optionally persist to backend via updatePrinter
+                    // await apiCall('updatePrinter', { id, status: 'online' });
+                }
+            } catch (error) {
+                // Fetch failed or timed out
+                showToast(`❌ ${printer.name} is OFFLINE (unreachable)`, 'error');
+                const idx = state.printers.findIndex(p => p.id === id);
+                if (idx !== -1) {
+                    state.printers[idx].status = 'offline';
+                    renderPrinters(state.printers);
+                    // Optionally persist
+                    // await apiCall('updatePrinter', { id, status: 'offline' });
+                }
+            } finally {
+                if (testBtn) {
+                    testBtn.disabled = false;
+                    testBtn.innerHTML = '<i class="fas fa-wifi"></i> Test';
+                }
+            }
         }
 
         async function editPrinter(id) {
