@@ -10,7 +10,7 @@
     <!-- Google Font (Inter) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
     <style>
         /* ===== RESET & BASE ===== */
@@ -21,13 +21,13 @@
         }
 
         :root {
-            --primary: #4F46E5;
-            --primary-light: #818CF8;
-            --primary-dark: #3730A3;
-            --primary-bg: #EEF2FF;
-            --success: #10B981;
-            --warning: #F59E0B;
-            --danger: #EF4444;
+            --primary: #24344D;
+            --primary-light: #4A5F82;
+            --primary-dark: #16202F;
+            --primary-bg: #EEF1F5;
+            --success: #3F8F5F;
+            --warning: #C98A2E;
+            --danger: #B5453B;
             --gray-50: #F9FAFB;
             --gray-100: #F3F4F6;
             --gray-200: #E5E7EB;
@@ -42,6 +42,10 @@
             --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
             --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.08);
             --transition: 0.2s ease;
+            --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+            --paper: #FAF9F6;
+            --paper-line: #E3DFD3;
+            --ink-amber: #D99A34;
         }
 
         body {
@@ -380,6 +384,7 @@
             padding: 0.15rem 0.6rem;
             border-radius: 20px;
             font-size: 0.7rem;
+            font-family: var(--font-mono);
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.03em;
@@ -407,29 +412,66 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+            background-color: var(--paper);
+            background-image: radial-gradient(var(--gray-300) 1px, transparent 1px);
+            background-size: 18px 18px;
             padding: 1.5rem;
         }
         .login-card {
+            position: relative;
             background: #fff;
-            border-radius: 20px;
-            padding: 2.5rem 2rem;
-            max-width: 400px;
+            border-radius: 4px;
+            padding: 2.5rem 2rem 2rem;
+            max-width: 380px;
             width: 100%;
-            box-shadow: 0 20px 60px rgba(79, 70, 229, 0.15);
+            box-shadow: 0 24px 48px rgba(22, 32, 47, 0.16), 0 2px 0 var(--primary);
+        }
+        /* perforated ticket edge */
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-image: linear-gradient(to right, var(--gray-300) 60%, transparent 0%);
+            background-position: top;
+            background-size: 10px 1px;
+            background-repeat: repeat-x;
+        }
+        .login-card .ticket-meta {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            letter-spacing: 0.06em;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        .login-card .ticket-meta .status-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            margin-right: 0.4rem;
+            box-shadow: 0 0 0 3px rgba(63, 143, 95, 0.15);
         }
         .login-card .logo {
             text-align: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.75rem;
         }
         .login-card .logo h1 {
-            font-size: 1.75rem;
+            font-size: 1.6rem;
             font-weight: 700;
+            letter-spacing: -0.01em;
             color: var(--primary);
         }
         .login-card .logo p {
             color: var(--gray-500);
-            font-size: 0.875rem;
+            font-size: 0.8rem;
+            margin-top: 0.15rem;
         }
         .login-card .form-group {
             margin-bottom: 1.25rem;
@@ -442,6 +484,16 @@
             font-size: 0.8rem;
             margin-top: 0.5rem;
             text-align: center;
+        }
+        .login-card .ticket-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px dashed var(--paper-line);
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: var(--gray-400);
+            text-align: center;
+            letter-spacing: 0.02em;
         }
 
         /* ===== APP LAYOUT ===== */
@@ -914,6 +966,10 @@
     <!-- ============================================================ -->
     <div id="loginPage">
         <div class="login-card">
+            <div class="ticket-meta">
+                <span><span class="status-dot"></span>System online</span>
+                <span id="loginClock"></span>
+            </div>
             <div class="logo">
                 <h1><i class="fas fa-print" style="margin-right:0.3rem;"></i> PrintFlow</h1>
                 <p>Print Management System</p>
@@ -932,11 +988,23 @@
                 </button>
                 <div id="loginError" class="login-error"></div>
             </form>
-            <p style="margin-top:1.25rem;font-size:0.75rem;color:var(--gray-400);text-align:center;">
-                Demo: admin@printflow.com / admin123
-            </p>
+            <div class="ticket-footer">SECURE CONNECTION · CONTACT YOUR ADMIN FOR ACCESS</div>
         </div>
     </div>
+
+    <script>
+        // Live clock on the login ticket header — purely cosmetic
+        (function loginClock() {
+            const el = document.getElementById('loginClock');
+            if (!el) return;
+            function tick() {
+                const now = new Date();
+                el.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+            tick();
+            setInterval(tick, 15000);
+        })();
+    </script>
 
     <!-- ============================================================ -->
     <!-- MAIN APP -->
@@ -1176,7 +1244,7 @@
         // CONFIGURATION
         // ================================================================
         // *** UPDATED: Your Google Apps Script Web App URL ***
-        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxPNUAq4YVt08oYwLID4q0xi3kzOMavxXAAO9Nd6vfFetHlOu78hJAgRx9UWt7plISy/exec';
+        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-4YxEYhfxOyLV-XChft1UtyWHN94Mc0vs8lyeC0QAhnchT5VBkeXKILeiQwdVpnvf/exec';
 
         // Set to false to use the real backend
         const USE_MOCK = false;
